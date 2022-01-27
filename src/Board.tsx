@@ -15,7 +15,6 @@ import './board.css';
 
 interface TicTacToeProps extends BoardProps<TicTacToeState> {}
 
-
 const blueCells  = [30, 32, 33, 34, 44, 45, 47, 59, 60, 62, 73, 75, 76, 87, 88]
 const purpleCells = [37, 38, 49, 50, 51, 53, 63, 64, 65, 77, 78, 79, 81, 92, 93, 94, 95]
 const orangeCells = [89, 90, 100, 102, 103, 104, 114, 115, 116, 117, 118, 129, 130, 131, 142, 144, 146, 156, 157, 159, 160]
@@ -33,65 +32,69 @@ export const Board = ({ G, ctx, moves, undo }: TicTacToeProps) => {
         />
       );
     const checkIsActive = (row, clm) => {
-        if (G.cells[row][clm] !== null) return false;
+        if (G.players[ctx.currentPlayer].board[row][clm] !== null) return false;
         return true;
       }
 
-  const onClick = (row, clm) => {
-    if (checkIsActive(row, clm)) {
-      moves.clickCell(row, clm);
-    }
-  };
-
-    let tbody: Array<JSX.Element> = [];
-    for (let row = 0; row < 14; row++) {
-        let cells: Array<JSX.Element> = [];
-        for (let clm = 0; clm < 14; clm++) {
-            const id = 14 * row + clm;
-            let color = ''
-            if (blueCells.includes(id)) {
-                color = 'active blue'
-            } else if (purpleCells.includes(id)) {
-                color = 'active purple'
-            } else if (orangeCells.includes(id)) {
-                color = 'active orange'
-            } else if (greenCells.includes(id)) {
-                color = 'active green'
-            } else if (blackCells.includes(id)) {
-                color = 'black'
-            } else if (greyCells.includes(id)) {
-                color = 'active grey'
-            }
-        cells.push(
-            <td
-                key={id}
-                className={checkIsActive(row, clm) ? `${color}` : ''}
-                onClick={() => onClick(row, clm)}
-                >
-                {G.cells[row][clm]}
-            </td>
-        );
+    const onClick = (row, clm, id) => {
+        if (checkIsActive(row, clm) && !blackCells.includes(id)) {
+        moves.clickCell(row, clm);
         }
-        tbody.push(<tr key={row}>{cells}</tr>);
+    };
+
+    const generateGridForPlayer = (playerId) => {
+        let tbody: Array<JSX.Element> = [];
+        for (let row = 0; row < 14; row++) {
+            let cells: Array<JSX.Element> = [];
+            for (let clm = 0; clm < 14; clm++) {
+                const id = 14 * row + clm;
+                let color = ''
+                if (blueCells.includes(id)) {
+                    color = checkIsActive(row, clm) ? 'active blue' : 'blue'
+                } else if (purpleCells.includes(id)) {
+                    color = checkIsActive(row, clm) ? 'active purple' : 'purple'
+                } else if (orangeCells.includes(id)) {
+                    color = checkIsActive(row, clm) ? 'active orange' : 'orange'
+                } else if (greenCells.includes(id)) {
+                    color = checkIsActive(row, clm) ? 'active green' : 'green'
+                } else if (blackCells.includes(id)) {
+                    color = 'black'
+                } else if (greyCells.includes(id)) {
+                    color = checkIsActive(row, clm) ? 'active grey' : 'grey'
+                }
+            cells.push(
+                <td
+                    key={id}
+                    className={`${color}`}
+                    onClick={() => onClick(row, clm, id)}
+                    >
+                    {G.players[playerId].board[row][clm]}
+                </td>
+            );
+            }
+            tbody.push(<tr key={row}>{cells}</tr>);
+        }
+        return tbody
     }
 
     return (
         <div style={{display: 'flex', flexDirection: 'row'}}>
             <div>
                 <table id="board">
-                    <tbody>{tbody}</tbody>
+                    <tbody>{generateGridForPlayer(0)}</tbody>
                 </table>
             </div>
             <div style={{height: 200, width: 100, margin: 50}}>
                 <button style={{height: 50, width: 100, marginBottom: 25}} onClick={() => undo()}>Undo</button>
+                <button style={{height: 50, width: 100, marginBottom: 25}} onClick={() => moves.endTurn()}>Next Player</button>
                 <button style={{height: 50, width: 100, marginBottom: 25}} onClick={() => moves.rollDice()}>Roll dice</button>
                 {diceBoard}
             </div>
-            {/* <div>
+            <div>
                 <table id="board">
-                    <tbody>{tbody}</tbody>
+                    <tbody>{generateGridForPlayer(1)}</tbody>
                 </table>
-            </div> */}
+            </div>
         </div>
     );
 }
