@@ -9,6 +9,7 @@
 import React from 'react';
 import { BoardProps } from 'boardgame.io/react';
 import { TicTacToeState } from './Game';
+import { DiceBoard } from "./DiceBoard";
 
 import './board.css';
 
@@ -23,7 +24,14 @@ const blackCells  = [61, 66, 143, 150]
 const greyCells  = [31, 46, 48, 52, 58, 67, 64, 74, 80, 86, 101, 123, 128, 135, 158, 162]
 
 export const Board = ({ G, ctx, moves }: TicTacToeProps) => {
-
+    const diceBoard = (
+        <DiceBoard
+          {...{
+            diceValues: G.diceValues,
+            color: 1,
+          }}
+        />
+      );
     const checkIsActive = (row, clm) => {
         if (G.cells[row][clm] !== null) return false;
         return true;
@@ -67,22 +75,22 @@ export const Board = ({ G, ctx, moves }: TicTacToeProps) => {
         tbody.push(<tr key={row}>{cells}</tr>);
     }
 
-    let winner: JSX.Element = <div/>;
-    if (ctx.gameover) {
-        winner =
-        ctx.gameover.winner !== undefined ? (
-            <div id="winner">Winner: {ctx.gameover.winner}</div>
-        ) : (
-            <div id="winner">Draw!</div>
-            );
-    }
-
     return (
-        <div>
-        <table id="board">
-            <tbody>{tbody}</tbody>
-        </table>
-        {winner}
+        <div style={{display: 'flex', flexDirection: 'row'}}>
+            <div>
+                <table id="board">
+                    <tbody>{tbody}</tbody>
+                </table>
+            </div>
+            <div style={{height: 200, width: 100, margin: 50}}>
+                <button style={{height: 50, width: 100, marginBottom: 25}} onClick={() => moves.rollDice()}>Roll dice</button>
+                {diceBoard}
+            </div>
+            {/* <div>
+                <table id="board">
+                    <tbody>{tbody}</tbody>
+                </table>
+            </div> */}
         </div>
     );
 }
