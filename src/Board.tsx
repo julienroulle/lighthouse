@@ -23,7 +23,7 @@ const greenCells  = [106, 107, 108, 109, 119, 120, 121, 122, 133, 134, 136, 137,
 const blackCells  = [61, 66, 143, 150]
 const greyCells  = [31, 46, 48, 52, 58, 67, 64, 74, 80, 86, 101, 123, 128, 135, 158, 162]
 
-export const Board = ({ G, ctx, moves }: TicTacToeProps) => {
+export const Board = ({ G, ctx, moves, undo }: TicTacToeProps) => {
     const diceBoard = (
         <DiceBoard
           {...{
@@ -83,6 +83,7 @@ export const Board = ({ G, ctx, moves }: TicTacToeProps) => {
                 </table>
             </div>
             <div style={{height: 200, width: 100, margin: 50}}>
+                <button style={{height: 50, width: 100, marginBottom: 25}} onClick={() => undo()}>Undo</button>
                 <button style={{height: 50, width: 100, marginBottom: 25}} onClick={() => moves.rollDice()}>Roll dice</button>
                 {diceBoard}
             </div>
